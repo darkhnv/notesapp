@@ -20,12 +20,14 @@ func (note Note) Display() {
 }
 
 func (note Note) Save() error {
-	fileName := strings.ReplaceAll(note.Title, " ", "_") + ".json"
-	data, err := json.MarshalIndent(note, "", "\t")
+	fileName := strings.ReplaceAll(note.Title, " ", "_")
+	fileName = strings.ToLower(fileName) + ".json"
+
+	json, err := json.Marshal(note)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(fileName, data, 0644)
+	return os.WriteFile(fileName, json, 0644)
 }
 
 func New(title, content string) (Note, error) {
