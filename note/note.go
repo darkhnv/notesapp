@@ -20,22 +20,18 @@ func (note Note) Display() {
 }
 
 func (note Note) Save() error {
-	fileName := strings.ReplaceAll(note.Title, " ", "_")
-	fileName = strings.ToLower(fileName) + ".json"
-
-	json, err := json.Marshal(note)
+	fileName := strings.ReplaceAll(note.Title, " ", "_") + ".json"
+	data, err := json.MarshalIndent(note, "", "\t")
 	if err != nil {
 		return err
 	}
-
-	return os.WriteFile(fileName, json, 0644)
+	return os.WriteFile(fileName, data, 0644)
 }
 
 func New(title, content string) (Note, error) {
 	if title == "" || content == "" {
-		return Note{}, errors.New("invalid input")
+		return Note{}, errors.New("both title and content are required")
 	}
-
 	return Note{
 		Title:     title,
 		Content:   content,

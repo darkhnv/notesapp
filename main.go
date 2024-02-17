@@ -19,9 +19,8 @@ func main() {
 	}
 
 	userNote.Display()
-	err = userNote.Save()
-	if err != nil {
-		fmt.Println("Saving the note failed.")
+	if err := userNote.Save(); err != nil {
+		fmt.Println("Failed to save the note")
 		return
 	}
 
@@ -29,10 +28,8 @@ func main() {
 }
 
 func getNoteData() (string, string) {
-	title := getUserInput("Note title: ")
-
-	content := getUserInput("Note content: ")
-
+	title := getUserInput("Enter note title: ")
+	content := getUserInput("Enter note content: ")
 	return title, content
 }
 
