@@ -2,37 +2,48 @@ package note
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
 	"time"
 )
 
+// Note represents a note
 type Note struct {
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// Display displays the note
 func (note Note) Display() {
-	fmt.Printf("Title:\n\n%v\n\nContent:\n\n%v\n\n", note.Title, note.Content)
+	fmt.Printf("Title: %s\nContent: %s\n", note.Title, note.Content)
 }
 
+// Save saves the note to a JSON file
 func (note Note) Save() error {
-	fileName := strings.ReplaceAll(note.Title, " ", "_")
-	fileName = strings.ToLower(fileName) + ".json"
+	// Generate file name from note title
+	fileName := strings.ToLower(strings.ReplaceAll(note.Title, " ", "_")) + ".json"
 
-	json, err := json.Marshal(note)
+	// Convert note to JSON
+	jsonData, err := json.Marshal(note)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal JSON: %v", err)
 	}
-	return os.WriteFile(fileName, json, 0644)
+
+	// Write JSON data to file
+	err = os.WriteFile(fileName, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write to file: %v", err)
+	}
+
+	return nil
 }
 
+// New creates a new note with the given title, content, and current timestamp
 func New(title, content string) (Note, error) {
 	if title == "" || content == "" {
-		return Note{}, errors.New("both title and content are required")
+		return Note{}, fmt.Errorf("both title and content are required")
 	}
 	return Note{
 		Title:     title,

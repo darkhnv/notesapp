@@ -2,34 +2,43 @@ package todo
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 )
 
+// Todo represents a todo item
 type Todo struct {
 	Text string `json:"text"`
 }
 
+// Display displays the todo item
 func (todo Todo) Display() {
-	fmt.Println(todo.Text)
+	fmt.Println("Todo:", todo.Text)
 }
 
+// Save saves the todo item to a JSON file
 func (todo Todo) Save() error {
 	fileName := "todo.json"
 
-	json, err := json.Marshal(todo)
+	// Convert todo item to JSON
+	jsonData, err := json.Marshal(todo)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal JSON: %v", err)
 	}
-	return os.WriteFile(fileName, json, 0644)
+
+	// Write JSON data to file
+	err = os.WriteFile(fileName, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write to file: %v", err)
+	}
+
+	return nil
 }
 
-func New(content string) (Todo, error) {
-	if content == "" {
-		return Todo{}, errors.New("both title and content are required")
+// New creates a new todo item with the given text
+func New(text string) (Todo, error) {
+	if text == "" {
+		return Todo{}, fmt.Errorf("todo text cannot be empty")
 	}
-	return Todo{
-		Text: content,
-	}, nil
+	return Todo{Text: text}, nil
 }
